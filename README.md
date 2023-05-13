@@ -11,7 +11,7 @@ This is a React Native project showcasing various features and components.
 ## Features
 
 - Thêm ,xóa ghi chú (13/5)
-- Sửa (Chưa làm)
-- Chọn màu nền, hình nền (Chưa làm)
-- Nhận link (Chưa làm)
+- Sửa (Chưa hoàn thành)
+- Chọn màu nền, hình nền (Chưa hoàn thành)
+- Nhận link (Chưa hoàn thành)
 
