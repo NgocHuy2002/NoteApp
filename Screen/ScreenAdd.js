@@ -3,13 +3,13 @@ import React, { useState } from 'react'
 import { TextInput, TouchableOpacity } from 'react-native-gesture-handler'
 import { connect } from 'react-redux';
 import { addNote } from '../actions/noteAction';
-
+import { ColorPicker } from 'primereact/colorpicker';
 
 const AddNote = ({ addNote, navigation }) => {
     const [title, setTitle] = useState('');
     const [text, setText] = useState('');
     // let [id, setId] = useState(10);
-
+    const [color, setColor] = useState('FFF');
     return (
         <View style={styles.container}>
             <TextInput
@@ -32,12 +32,13 @@ const AddNote = ({ addNote, navigation }) => {
                 onChangeText={setText}
                 scrollEnabled={true}
                 style={{
-                    height: Dimensions.get('window').height * 0.7,
+                    height: Dimensions.get('window').height * 0.74,
                     textAlignVertical: 'top',
 
                 }}
             />
-
+            <View>
+                
             <TouchableOpacity onPress={() => {
                 if (text.trim() !== '' && title.trim() !== '') {
                     const newNote = {
@@ -53,6 +54,7 @@ const AddNote = ({ addNote, navigation }) => {
             }} style={styles.addButton}>
                 <Text>Add</Text>
             </TouchableOpacity>
+            </View>
         </View>
     )
 }
@@ -65,16 +67,17 @@ const styles = StyleSheet.create({
         paddingHorizontal: 10
     },
     addButton: {
+        alignSelf: 'flex-end',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
         position: 'relative',
         borderRadius: 35,
-        top: 10,
-        marginLeft: Dimensions.get('window').width * 0.5,
+        right: 10,
+        marginLeft: Dimensions.get('window').width * 0.45,
         width: 150,
         height: 50,
-        backgroundColor: '#219653',
+        backgroundColor: '#00FFCA',
     }
 })
 export default connect(null, { addNote })(AddNote);

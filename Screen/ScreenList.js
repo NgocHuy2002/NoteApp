@@ -1,32 +1,73 @@
-import { Dimensions, FlatList, StyleSheet, Text, View } from 'react-native'
+import { Dimensions, FlatList, ScrollView, StyleSheet, Text, View } from 'react-native'
 import React, { useState } from 'react'
-import { TouchableOpacity } from 'react-native-gesture-handler';
+import { TouchableOpacity, TouchableWithoutFeedback } from 'react-native';
 import { connect } from 'react-redux';
 import { deleteNote } from '../actions/noteAction';
+import HyperlinkText from '../extra/HyperlinkText';
 
 
 const NoteList = ({ notes, deleteNote, navigation }) => {
-    const renderItem = ({ item }) => (
-        <View>
-            <View style={styles.card}>
-                <Text style={styles.title}>{item.title}</Text>
-                <Text style={styles.content} >{item.text}</Text>
-                <TouchableOpacity style={styles.deleteButton} onPress={() => deleteNote(item.id)}>
-                    <Text style={styles.deleteButtonText}>Delete</Text>
-                </TouchableOpacity>
-            </View>
-        </View>
-    );
+    const handleEditNote = (noteId) => {
+        navigation.navigate('Edit', { noteId });
+    };
+    // const renderItem = ({ item }) => (
+    //     <View>
+    //         <TouchableWithoutFeedback
+    //             onLongPress={() => {
+    //                 deleteNote(item.id)
+    //                 console.log('You long-pressed the button!');
+    //             }}
+    //             delayLongPress={1000}
+    //             onPress={() => {
+    //                 handleEditNote(item.id)
+    //             }}
+    //         >
+    //             <View style={styles.card}>
+    //                 <View>
+    //                     <Text style={styles.title}>{item.title}</Text>
+    //                     <Text style={styles.content} >{item.text}</Text>
+    //                 </View>
+    //                 <View style={{
+    //                     alignSelf: 'flex-end',
+    //                 }}>
+    //                 </View>
+    //             </View>
+    //         </TouchableWithoutFeedback>
+    //     </View>
+    // );
     return (
         <View style={styles.container}>
-            <View style={styles.List}>
-                <FlatList
-                    data={notes}
-                    renderItem={renderItem}
-                    keyExtractor={(item) => item.id.toString()}
-                />
-            </View>
-
+            <ScrollView>
+            {notes.map((note) => (
+                <View key={note.id} style={styles.List}>
+                    
+                    <TouchableWithoutFeedback
+                        onLongPress={() => {
+                            deleteNote(note.id)
+                            // console.log('You long-pressed the button!');
+                        }}
+                        delayLongPress={1000}
+                        onPress={() => {
+                            handleEditNote(note.id)
+                        }}
+                    >
+                        <View style={styles.card}>
+                            
+                            <View> 
+                                <Text style={styles.title}>{note.title}</Text>
+                                <HyperlinkText style={styles.content} text={note.text}/>
+                                {/* <Text style={styles.content} >{note.text}</Text> */}
+                            </View>
+                            <View style={{
+                                alignSelf: 'flex-end',
+                            }}>
+                            </View>
+                        </View>
+                    </TouchableWithoutFeedback>
+                </View>
+            ))}
+            </ScrollView>
+            {/* -------------------------------- */}
             <View style={styles.addButton}>
                 <TouchableOpacity onPress={() => {
                     navigation.navigate('Add')
@@ -39,33 +80,37 @@ const NoteList = ({ notes, deleteNote, navigation }) => {
 }
 
 const styles = StyleSheet.create({
-
+    container:{
+        flex:1,
+    },
     List: {
-        display: 'flex',
+        display:'flex',
+        justifyContent:'center',
+        alignContent:'center',
         width: Dimensions.get('window').width * 1,
-        height: Dimensions.get('window').height * 0.9,
     },
     addButton: {
+        alignSelf: 'flex-end',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
         position: 'absolute',
         borderRadius: 35,
         bottom: 10,
-        right:10,
+        right: 10,
         marginLeft: Dimensions.get('window').width * 0.45,
         width: 150,
         height: 50,
         backgroundColor: '#00FFCA',
-        
+
     },
     card: {
-        marginTop: 10,
-        width: Dimensions.get('window').width * 0.9,
+        marginTop: 5,
+        width: Dimensions.get('window').width * 0.95,
         backgroundColor: '#fff',
         borderRadius: 8,
         padding: 16,
-        marginLeft:10,
+        marginLeft: 10,
         shadowColor: '#000',
         shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.3,
@@ -76,10 +121,6 @@ const styles = StyleSheet.create({
     title: {
         fontSize: 18,
         fontWeight: 'bold',
-        marginBottom: 8,
-    },
-    content: {
-        fontSize: 16,
         marginBottom: 8,
     },
     deleteButton: {
