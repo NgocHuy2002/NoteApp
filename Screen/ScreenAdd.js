@@ -122,6 +122,7 @@ const styles = StyleSheet.create({
         backgroundColor: '#00FFCA',
     },
     color: {
+        borderRadius: Math.round(Dimensions.get('window').width + Dimensions.get('window').height) / 2,
         marginTop: 10,
         marginLeft: 10,
         width: 30,
