@@ -1,17 +1,18 @@
 // NoteEdit.js
 import React, { useState, useEffect } from 'react';
-import { Dimensions,TouchableOpacity,Text,View,StyleSheet, TextInput, Button } from 'react-native';
+import { Dimensions, TouchableOpacity,ScrollView, Text, View, StyleSheet, TextInput } from 'react-native';
 import { connect } from 'react-redux';
 import { editNote } from '../actions/noteAction';
 
 const ScreenEdit = ({ note, editNote, navigation }) => {
     const [title, setTitle] = useState('');
     const [text, setText] = useState('');
-
+    const [color, setColor] = useState('#FFF')
     useEffect(() => {
         if (note) {
             setTitle(note.title);
             setText(note.text);
+            setColor(note.color)
         }
     }, [note]);
 
@@ -21,6 +22,7 @@ const ScreenEdit = ({ note, editNote, navigation }) => {
                 ...note,
                 title: title.trim(),
                 text: text.trim(),
+                color: color,
             };
             editNote(updateNote);
             navigation.navigate('List')
@@ -28,37 +30,67 @@ const ScreenEdit = ({ note, editNote, navigation }) => {
     };
 
     return (
-        <View style={styles.container}>
-        <TextInput
-            placeholder='Title'
-            value={title}
-            onChangeText={setTitle}
-            style={{
-                width: Dimensions.get('window').width * 0.9,
-                height: Dimensions.get('window').width * 0.1,
-                marginBottom: 15,
-                borderBottomColor: 'black',
-                borderBottomWidth: StyleSheet.hairlineWidth,
-            }}
-        />
-        <TextInput
-            multiline={true}
-            numberOfLines={1000}
-            placeholder='Note'
-            value={text}
-            onChangeText={setText}
-            scrollEnabled={true}
-            style={{
-                height: Dimensions.get('window').height * 0.74,
-                textAlignVertical: 'top',
+        <View style={[styles.container, {backgroundColor:color}]}>
+            <TextInput
+                placeholder='Title'
+                value={title}
+                onChangeText={setTitle}
+                style={{
+                    width: Dimensions.get('window').width * 0.9,
+                    height: Dimensions.get('window').width * 0.1,
+                    marginBottom: 15,
+                    borderBottomColor: 'black',
+                    borderBottomWidth: StyleSheet.hairlineWidth,
+                }}
+            />
+            <TextInput
+                multiline={true}
+                numberOfLines={1000}
+                placeholder='Note'
+                value={text}
+                onChangeText={setText}
+                scrollEnabled={true}
+                style={{
+                    height: Dimensions.get('window').height * 0.74,
+                    textAlignVertical: 'top',
 
-            }}
-        />
-        
-        <TouchableOpacity onPress={handleSubmit} style={styles.addButton}>
-            <Text>Update Note</Text>
-        </TouchableOpacity>
-    </View>
+                }}
+            />
+            <View style={{ width: '50%', display: 'flex', alignSelf: 'flex-start', position: 'absolute', bottom: 20 }}>
+                <ScrollView horizontal={true} >
+                    <TouchableOpacity style={[styles.color, { backgroundColor: '#6E47E5' }]}
+                        onPress={() => {
+                            setColor('#6E47E5')
+                        }}
+                    ></TouchableOpacity>
+                    <TouchableOpacity style={[styles.color, { backgroundColor: '#E5486F' }]}
+                        onPress={() => {
+                            setColor('#E5486F')
+                        }}
+                    ></TouchableOpacity>
+                    <TouchableOpacity style={[styles.color, { backgroundColor: '#BEE548' }]}
+                        onPress={() => {
+                            setColor('#BEE548')
+                        }}
+                    ></TouchableOpacity>
+                    <TouchableOpacity style={[styles.color, { backgroundColor: '#48E5BE' }]}
+                        onPress={() => {
+                            setColor('#48E5BE')
+                        }}
+                    ></TouchableOpacity>
+                    <TouchableOpacity style={[styles.color, { backgroundColor: '#48E56F' }]}
+                        onPress={() => {
+                            setColor('#48E56F')
+                        }}
+                    ></TouchableOpacity>
+                </ScrollView>
+            </View>
+            <View style={styles.buttonWarp}>
+                <TouchableOpacity onPress={handleSubmit} style={styles.addButton}>
+                    <Text>Update Note</Text>
+                </TouchableOpacity>
+            </View>
+        </View>
     );
 };
 
@@ -69,18 +101,29 @@ const styles = StyleSheet.create({
         paddingVertical: 20,
         paddingHorizontal: 10
     },
-    addButton: {
+    buttonWarp: {
         alignSelf: 'flex-end',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
         position: 'relative',
+        width: 150,
+        height: 50,
+    },
+    addButton: {
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
         borderRadius: 35,
-        right: 10,
-        marginLeft: Dimensions.get('window').width * 0.45,
         width: 150,
         height: 50,
         backgroundColor: '#00FFCA',
+    },
+    color: {
+        marginTop: 10,
+        marginLeft: 10,
+        width: 30,
+        height: 30
     }
 })
 

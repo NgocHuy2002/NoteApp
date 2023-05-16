@@ -1,92 +1,89 @@
-import { Dimensions, FlatList, ScrollView, StyleSheet, Text, View } from 'react-native'
+import { Dimensions, ScrollView, StyleSheet, Text, View, Button } from 'react-native'
 import React, { useState } from 'react'
 import { TouchableOpacity, TouchableWithoutFeedback } from 'react-native';
 import { connect } from 'react-redux';
 import { deleteNote } from '../actions/noteAction';
 import HyperlinkText from '../extra/HyperlinkText';
-
+import Swipeable from 'react-native-gesture-handler/Swipeable';
 
 const NoteList = ({ notes, deleteNote, navigation }) => {
     const handleEditNote = (noteId) => {
         navigation.navigate('Edit', { noteId });
     };
-    // const renderItem = ({ item }) => (
-    //     <View>
-    //         <TouchableWithoutFeedback
-    //             onLongPress={() => {
-    //                 deleteNote(item.id)
-    //                 console.log('You long-pressed the button!');
-    //             }}
-    //             delayLongPress={1000}
-    //             onPress={() => {
-    //                 handleEditNote(item.id)
-    //             }}
-    //         >
-    //             <View style={styles.card}>
-    //                 <View>
-    //                     <Text style={styles.title}>{item.title}</Text>
-    //                     <Text style={styles.content} >{item.text}</Text>
-    //                 </View>
-    //                 <View style={{
-    //                     alignSelf: 'flex-end',
-    //                 }}>
-    //                 </View>
-    //             </View>
-    //         </TouchableWithoutFeedback>
-    //     </View>
-    // );
+    let row = [];
+    let prevOpenedRow;
+    const [menu, setMenu] = useState(false);
+    const renderRightActions = (progress, dragX) => {
+        return (
+            <View
+                style={{
+                    margin: 0,
+                    alignContent: 'center',
+                    justifyContent: 'center',
+                    width: 70,
+                }}>
+            </View>
+        );
+    };
     return (
         <View style={styles.container}>
-            <ScrollView>
-            {notes.map((note) => (
-                <View key={note.id} style={styles.List}>
-                    
-                    <TouchableWithoutFeedback
-                        onLongPress={() => {
-                            deleteNote(note.id)
-                            // console.log('You long-pressed the button!');
-                        }}
-                        delayLongPress={1000}
-                        onPress={() => {
-                            handleEditNote(note.id)
-                        }}
-                    >
-                        <View style={styles.card}>
-                            
-                            <View> 
-                                <Text style={styles.title}>{note.title}</Text>
-                                <HyperlinkText style={styles.content} text={note.text}/>
-                                {/* <Text style={styles.content} >{note.text}</Text> */}
+            <ScrollView >
+                {notes.map((note) => (
+                    <View key={note.id} style={styles.List}>
+                        <Swipeable
+                        renderRightActions={(progress, dragX) =>
+                            renderRightActions(progress, dragX)
+                        }
+                        onSwipeableOpen={() => deleteNote(note.id)}
+                        rightOpenValue={-100}>
+                        <TouchableWithoutFeedback
+                            onLongPress={() => {
+                                deleteNote(note.id)
+
+                            }}
+                            delayLongPress={1000}
+                            onPress={() => {
+                                setMenu(false)
+                                handleEditNote(note.id)
+                            }}
+                        >
+                            <View style={[styles.card, { backgroundColor: note.color }]}>
+
+                                <View>
+                                    <Text style={[styles.title, { alignSelf: 'flex-start' }]}>{note.title}</Text>
+                                    <HyperlinkText style={styles.content} text={note.text} />
+                                </View>
+                                <View style={{
+                                    alignSelf: 'flex-end',
+                                }}>
+                                </View>
                             </View>
-                            <View style={{
-                                alignSelf: 'flex-end',
-                            }}>
-                            </View>
-                        </View>
-                    </TouchableWithoutFeedback>
-                </View>
-            ))}
-            </ScrollView>
-            {/* -------------------------------- */}
-            <View style={styles.addButton}>
-                <TouchableOpacity onPress={() => {
-                    navigation.navigate('Add')
-                }}>
-                    <Text>Add new note</Text>
-                </TouchableOpacity>
-            </View>
-        </View>
+                        </TouchableWithoutFeedback>
+                    </Swipeable>
+                    </View>
+    ))
+}
+            </ScrollView >
+    {/* -------------------------------- */ }
+    < View style = { styles.addButton } >
+        <TouchableOpacity onPress={() => {
+            navigation.navigate('Add')
+        }}>
+            <Text>Add new note</Text>
+        </TouchableOpacity>
+            </View >
+        </View >
     )
 }
 
 const styles = StyleSheet.create({
-    container:{
-        flex:1,
+    container: {
+        flex: 1,
     },
     List: {
-        display:'flex',
-        justifyContent:'center',
-        alignContent:'center',
+        display: 'flex',
+        justifyContent: 'center',
+        alignContent: 'center',
         width: Dimensions.get('window').width * 1,
     },
     addButton: {

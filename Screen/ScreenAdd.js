@@ -1,17 +1,16 @@
-import { Dimensions, StyleSheet, Text, View } from 'react-native'
+import { Dimensions, StyleSheet, ScrollView, Text, View } from 'react-native'
 import React, { useState } from 'react'
 import { TextInput, TouchableOpacity } from 'react-native-gesture-handler'
 import { connect } from 'react-redux';
 import { addNote } from '../actions/noteAction';
-import { ColorPicker } from 'primereact/colorpicker';
+// import ColorPicker from '../extra/ColorPicker';
 
 const AddNote = ({ addNote, navigation }) => {
     const [title, setTitle] = useState('');
     const [text, setText] = useState('');
-    // let [id, setId] = useState(10);
-    const [color, setColor] = useState('FFF');
+    const [color, setColor] = useState('#FFF')
     return (
-        <View style={styles.container}>
+        <View style={[styles.container, { backgroundColor: color }]}>
             <TextInput
                 placeholder='Title'
                 value={title}
@@ -34,26 +33,55 @@ const AddNote = ({ addNote, navigation }) => {
                 style={{
                     height: Dimensions.get('window').height * 0.74,
                     textAlignVertical: 'top',
-
                 }}
             />
-            <View>
-                
-            <TouchableOpacity onPress={() => {
-                if (text.trim() !== '' && title.trim() !== '') {
-                    const newNote = {
-                        id: Date.now(),
-                        title,
-                        text,
-                    };
-                    addNote(newNote);
-                    setTitle('')
-                    setText('');
-                    navigation.navigate('List')
-                }
-            }} style={styles.addButton}>
-                <Text>Add</Text>
-            </TouchableOpacity>
+            <View style={styles.colorWarp}>
+                <ScrollView horizontal={true} style={{zIndex:-2}}>
+                    <TouchableOpacity style={[styles.color, { backgroundColor: '#6E47E5' }]}
+                        onPress={() => {
+                            setColor('#6E47E5')
+                        }}
+                    ></TouchableOpacity>
+                    <TouchableOpacity style={[styles.color, { backgroundColor: '#E5486F' }]}
+                        onPress={() => {
+                            setColor('#E5486F')
+                        }}
+                    ></TouchableOpacity>
+                    <TouchableOpacity style={[styles.color, { backgroundColor: '#BEE548' }]}
+                        onPress={() => {
+                            setColor('#BEE548')
+                        }}
+                    ></TouchableOpacity>
+                    <TouchableOpacity style={[styles.color, { backgroundColor: '#48E5BE' }]}
+                        onPress={() => {
+                            setColor('#48E5BE')
+                        }}
+                    ></TouchableOpacity>
+                    <TouchableOpacity style={[styles.color, { backgroundColor: '#48E56F' }]}
+                        onPress={() => {
+                            setColor('#48E56F')
+                        }}
+                    ></TouchableOpacity>
+                </ScrollView>
+            </View>
+            <View style={styles.buttonWarp}>
+                <TouchableOpacity onPress={() => {
+                    if (text.trim() !== '') {
+                        const newNote = {
+                            id: Date.now(),
+                            title,
+                            text,
+                            color,
+                        };
+                        addNote(newNote);
+                        setTitle('')
+                        setText('');
+                        setColor('#FFF')
+                        navigation.navigate('List')
+                    }
+                }} style={styles.addButton}>
+                    <Text>Add</Text>
+                </TouchableOpacity>
             </View>
         </View>
     )
@@ -66,18 +94,38 @@ const styles = StyleSheet.create({
         paddingVertical: 20,
         paddingHorizontal: 10
     },
-    addButton: {
+    colorWarp: {
+        height: 50,
+        borderRadius:35,
+        width: '55%',
+        display: 'flex',
+        alignSelf: 'flex-start',
+        position: 'absolute',
+        bottom: 20,
+    },
+    buttonWarp: {
         alignSelf: 'flex-end',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
         position: 'relative',
+        width: 150,
+        height: 50,
+    },
+    addButton: {
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
         borderRadius: 35,
-        right: 10,
-        marginLeft: Dimensions.get('window').width * 0.45,
         width: 150,
         height: 50,
         backgroundColor: '#00FFCA',
+    },
+    color: {
+        marginTop: 10,
+        marginLeft: 10,
+        width: 30,
+        height: 30
     }
 })
 export default connect(null, { addNote })(AddNote);
