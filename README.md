@@ -10,7 +10,7 @@ This is a React Native project showcasing various features and components.
 
 ## Features
 
-- Thêm ghi chú (13/5)
+- Thêm ghi chú,xóa (13/5)
 - Vuốt sang trái để xóa ghi chú (15/5)
 - Sửa (15/5)
 - Chọn màu nền (16/5)
