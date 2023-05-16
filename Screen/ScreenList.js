@@ -34,7 +34,7 @@ const NoteList = ({ notes, deleteNote, navigation }) => {
                         renderRightActions={(progress, dragX) =>
                             renderRightActions(progress, dragX)
                         }
-                        onSwipeableOpen={() => deleteNote(note.id)}
+                        onSwipeableWillOpen={() => deleteNote(note.id)}
                         rightOpenValue={-100}>
                         <TouchableWithoutFeedback
                             onLongPress={() => {
