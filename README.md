@@ -15,4 +15,6 @@ This is a React Native project showcasing various features and components.
 - Sửa (15/5)
 - Chọn màu nền (16/5)
 - Nhận link, giới hạn chữ được hiển thị (15/5)
+- Trạng thái
+- Vuốt để thêm vào yêu thích
 
