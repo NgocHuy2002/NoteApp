@@ -1,4 +1,4 @@
-import { Dimensions, ScrollView, StyleSheet, Text, View, Button } from 'react-native'
+import { Dimensions, StyleSheet, Text, View, FlatList } from 'react-native'
 import React, { useState } from 'react'
 import { TouchableOpacity, TouchableWithoutFeedback } from 'react-native';
 import { connect } from 'react-redux';
@@ -10,67 +10,44 @@ const NoteList = ({ notes, deleteNote, navigation }) => {
     const handleEditNote = (noteId) => {
         navigation.navigate('Edit', { noteId });
     };
-    let row = [];
-    let prevOpenedRow;
-    const [menu, setMenu] = useState(false);
-    const renderRightActions = (progress, dragX) => {
-        return (
-            <View
-                style={{
-                    margin: 0,
-                    alignContent: 'center',
-                    justifyContent: 'center',
-                    width: 70,
+    const renderItem = ({ item }) => (
+        <TouchableWithoutFeedback
+            onLongPress={() => {
+                deleteNote(item.id)
+            }}
+            delayLongPress={1000}
+            onPress={() => {
+                setMenu(false)
+                handleEditNote(item.id)
+            }}
+        >
+            <View style={[styles.card, { backgroundColor: item.color }]}>
+
+                <View>
+                    <Text style={[styles.title, { alignSelf: 'flex-start' }]}>{item.title}</Text>
+                    <HyperlinkText style={styles.content} text={item.text} />
+                </View>
+                <View style={{
+                    alignSelf: 'flex-end',
                 }}>
+                </View>
             </View>
-        );
-    };
+        </TouchableWithoutFeedback>
+    );
     return (
         <View style={styles.container}>
-            <ScrollView >
-                {notes.map((note) => (
-                    <View key={note.id} style={styles.List}>
-                        <Swipeable
-                        renderRightActions={(progress, dragX) =>
-                            renderRightActions(progress, dragX)
-                        }
-                        onSwipeableOpen={() => deleteNote(note.id)}
-                        rightOpenValue={-100}>
-                        <TouchableWithoutFeedback
-                            onLongPress={() => {
-                                deleteNote(note.id)
-
-                            }}
-                            delayLongPress={1000}
-                            onPress={() => {
-                                setMenu(false)
-                                handleEditNote(note.id)
-                            }}
-                        >
-                            <View style={[styles.card, { backgroundColor: note.color }]}>
-
-                                <View>
-                                    <Text style={[styles.title, { alignSelf: 'flex-start' }]}>{note.title}</Text>
-                                    <HyperlinkText style={styles.content} text={note.text} />
-                                </View>
-                                <View style={{
-                                    alignSelf: 'flex-end',
-                                }}>
-                                </View>
-                            </View>
-                        </TouchableWithoutFeedback>
-                    </Swipeable>
-                    </View>
-    ))
-}
-            </ScrollView >
-    {/* -------------------------------- */ }
-    < View style = { styles.addButton } >
-        <TouchableOpacity onPress={() => {
-            navigation.navigate('Add')
-        }}>
-            <Text>Add new note</Text>
-        </TouchableOpacity>
+            <FlatList
+                data={notes}
+                renderItem={renderItem}
+                keyExtractor={(item) => item.id.toString()}
+            />
+            {/* -------------------------------- */}
+            < View style={styles.addButton} >
+                <TouchableOpacity onPress={() => {
+                    navigation.navigate('Add')
+                }}>
+                    <Text>Add new note</Text>
+                </TouchableOpacity>
             </View >
         </View >
     )
