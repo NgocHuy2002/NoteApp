@@ -17,9 +17,9 @@ const HyperlinkText = ({ text }) => {
   }
 else if (!isLink && text.length > 100) {
     const trimmedText = text.substring(0, 100) + '...';
-    return <Text>{trimmedText}</Text>;
+    return <Text style={{color:'#E2E2E3'}}>{trimmedText}</Text>;
   }
-  return <Text>{text}</Text>;
+  return <Text style={{color:'#E2E2E3'}}>{text}</Text>;
 };
 
 export default HyperlinkText;

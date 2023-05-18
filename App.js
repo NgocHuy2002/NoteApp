@@ -6,22 +6,20 @@ import { createStackNavigator } from '@react-navigation/stack';
 import ScreenList from './Screen/ScreenList';
 import ScreenAdd from './Screen/ScreenAdd';
 import { store, persistor } from './store';
-import ScreenEdit from './Screen/ScreenEdit';
 
 
 const Stack = createStackNavigator();
 const App = () => {
   return (
     <NavigationContainer>
-    <Provider store={store}>
-      <PersistGate loading={null} persistor={persistor}>
-        <Stack.Navigator>
-        <Stack.Screen name="List" component={ScreenList} />
-        <Stack.Screen name="Add" component={ScreenAdd} />
-        <Stack.Screen name="Edit" component={ScreenEdit} />
-      </Stack.Navigator>
-      </PersistGate>
-    </Provider>
+      <Provider store={store}>
+        <PersistGate loading={null} persistor={persistor}>
+          <Stack.Navigator screenOptions={{headerShown:false}}>
+            <Stack.Screen name="List" component={ScreenList}/>
+            <Stack.Screen name="Add" component={ScreenAdd} />
+          </Stack.Navigator>
+        </PersistGate>
+      </Provider>
     </NavigationContainer>
   );
 };
