@@ -2,16 +2,43 @@ import { Dimensions, StyleSheet, Text, View, FlatList, ToastAndroid, DrawerLayou
 import React, { useState, useRef } from 'react'
 import { TouchableOpacity, TouchableWithoutFeedback } from 'react-native';
 import { connect } from 'react-redux';
-import { deleteNote } from '../actions/noteAction';
+import { deleteNote, addToFavorite } from '../actions/noteAction';
 import HyperlinkText from '../extra/HyperlinkText';
 import Swipeable from 'react-native-gesture-handler/Swipeable';
 import StatusBarCostum from '../extra/StatusBarCostum';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import BouncyCheckbox from "react-native-bouncy-checkbox";
 import Icon_Ionicons from 'react-native-vector-icons/Ionicons';
 
 
-
-const NoteList = ({ notes, deleteNote, navigation }) => {
+const NoteList = ({ notes, addToFavorite, deleteNote, navigation }) => {
+    const checkStatus = (check, id) => {
+        if (check === true) {
+            return (
+                <View style={styles.status}>
+                    <BouncyCheckbox
+                        size={25}
+                        disableBuiltInState={true}
+                        isChecked={true}
+                        onPress={() => { handleEditNote(id) }}
+                        fillColor="#E2E2E3"
+                    />
+                </View>
+            )
+        }
+        else {
+            return (
+                <BouncyCheckbox
+                    style={styles.status}
+                    size={25}
+                    disableBuiltInState={true}
+                    isChecked={false}
+                    onPress={() => { handleEditNote(id) }}
+                    fillColor="#E2E2E3"
+                />
+            )
+        }
+    }
     const handleEditNote = (noteId) => {
         navigation.navigate('Add', { noteId });
     };
@@ -20,6 +47,10 @@ const NoteList = ({ notes, deleteNote, navigation }) => {
         deleteNote(noteId)
         ToastAndroid.show('Note have been delete!', ToastAndroid.SHORT);
     }
+    const handleAddFavorite = ({ item }) => (
+        addToFavorite(item),
+        ToastAndroid.show('Note have add to favorite!', ToastAndroid.SHORT)
+    )
     const [keyword, setKeyword] = useState('')
     const drawer = useRef(null);
     const drawerPosition = 'left';
@@ -28,36 +59,51 @@ const NoteList = ({ notes, deleteNote, navigation }) => {
             <Text style={styles.paragraph}>Note.</Text>
             <TouchableOpacity style={styles.menuButton}>
                 <Icon name='lightbulb-o' color={'#E2E2E3'} size={30} style={{ paddingRight: 20 }} />
-                <Text style={{ color: '#E2E2E3',fontSize:20 }}>Note</Text>
+                <Text style={{ color: '#E2E2E3', fontSize: 20 }}>Note</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.menuButton}><Text style={{ color: '#E2E2E3', }}>Favorite</Text></TouchableOpacity>
+            <TouchableOpacity style={styles.menuButton} onPress={() => {
+                navigation.navigate('Favorite')
+            }}><Text style={{ color: '#E2E2E3', }}>Favorite</Text></TouchableOpacity>
         </View>
     );
-    // SWIPEABLE
-    const renderRightActions = (progress, dragX) => {
-        return (
-            <View
-                style={{
-                    margin: 0,
-                    alignContent: 'center',
-                    justifyContent: 'center',
-                    width: 70,
-                }}
-            >
-
-                <Text style={{ color: '#E2E2E3', }} onPress={handleDeleteNote}>Delete</Text>
-            </View>
-        );
-    };
     // RENDER ITEM FLATLIST
     const renderItem = ({ item }) => (
         <View>
             <Swipeable
-                renderRightActions={(progress, dragX) =>
-                    renderRightActions(progress, dragX)
-                }
-                onSwipeableOpen={() => handleDeleteNote(item.id)}
-                rightOpenValue={-100}
+                renderRightActions={(progress, dragX) => {
+                    return (
+                        <View
+                            style={{
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                width: 80,
+                                height: 100,
+                            }}
+                        >
+                            <TouchableOpacity
+                                onPress={() => { handleDeleteNote(item.id) }}>
+                                <Icon name='trash-o' color={'#ea4335'} size={30} />
+                            </TouchableOpacity>
+                        </View>
+                    )
+                }}
+                renderLeftActions={(progress, dragX) => {
+                    return (
+                        <View
+                            style={{
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                width: 80,
+                                height: 100,
+                            }}
+                        >
+                            <TouchableOpacity
+                                onPress={() => {handleAddFavorite({ item }) }}>
+                                <Icon name='heart' color={'#ea4335'} size={30} />
+                            </TouchableOpacity>
+                        </View>
+                    )
+                }}
             >
                 <TouchableWithoutFeedback
                     delayLongPress={1000}
@@ -66,10 +112,12 @@ const NoteList = ({ notes, deleteNote, navigation }) => {
                     }}
                 >
                     <View style={[styles.card, { backgroundColor: item.color }]}>
-
                         <View>
-                            <Text style={[styles.title, { alignSelf: 'flex-start', color: '#E2E2E3' }]}>{item.title}</Text>
-                            <HyperlinkText style={styles.content} text={item.text} />
+                            {checkStatus(item.status, item.id)}
+                            <Text style={[styles.title, { alignSelf: 'flex-start', color: '#E2E2E3' }]}>
+                                {item.title}
+                            </Text>
+                            <HyperlinkText text={item.text} />
                         </View>
                     </View>
                 </TouchableWithoutFeedback>
@@ -116,14 +164,16 @@ const NoteList = ({ notes, deleteNote, navigation }) => {
             />
             {/* ----- */}
             {/* BUTTON NAVIGATION TO ADD */}
-            < View style={styles.addButton} >
-                <TouchableOpacity onPress={() => {
-                    navigation.navigate('Add', Date.now())
-                }}
-                >
-                    <Icon_Ionicons name='add' size={50} />
-                </TouchableOpacity>
-            </View >
+            <View style={styles.footer}>
+                < View style={styles.addButton} >
+                    <TouchableOpacity onPress={() => {
+                        navigation.navigate('Add', Date.now())
+                    }}
+                    >
+                        <Icon_Ionicons name='add' size={50} />
+                    </TouchableOpacity>
+                </View >
+            </View>
             {/* ----- */}
         </DrawerLayoutAndroid >
     )
@@ -155,7 +205,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'flex-start',
-        paddingLeft:20,
+        paddingLeft: 20,
         marginBottom: 10,
         width: '100%',
         height: 40,
@@ -167,7 +217,6 @@ const styles = StyleSheet.create({
         display: 'flex',
         alignSelf: 'center',
         justifyContent: 'center',
-        alignContent: 'center',
         width: '90%',
         height: 50,
         paddingLeft: 20,
@@ -198,20 +247,32 @@ const styles = StyleSheet.create({
         alignContent: 'center',
         width: Dimensions.get('window').width * 1,
     },
-    addButton: {
-        alignSelf: 'flex-end',
+    status: {
         display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
         position: 'absolute',
+        right: 0,
+    },
+    footer: {
+        backgroundColor: '#525355',
+        display: 'flex',
+        alignSelf: 'center',
+        justifyContent: 'center',
+        alignItems: 'center',
+        width: '100%',
+        height: 50,
+        borderWidth: 1,
+        borderTopLeftRadius: 70,
+        borderTopRightRadius: 70,
+    },
+    addButton: {
         borderRadius: Math.round(Dimensions.get('window').width + Dimensions.get('window').height) / 2,
+        paddingLeft: 1,
         bottom: 10,
-        right: 10,
-        marginLeft: Dimensions.get('window').width * 0.45,
         width: 60,
         height: 60,
+        borderWidth: 5,
+        borderColor: '#202124',
         backgroundColor: '#00FFCA',
-
     },
     card: {
         marginTop: 5,
@@ -251,4 +312,4 @@ const mapStateToProps = (state) => {
     };
 };
 
-export default connect(mapStateToProps, { deleteNote })(NoteList);
+export default connect(mapStateToProps, { addToFavorite, deleteNote })(NoteList);
