@@ -25,11 +25,17 @@ const AddNote = ({ note,favorite, editNote, addNote, navigation }) => {
     const [status, setStatus] = useState(false);
     const [color, setColor] = useState('#202124')
     useEffect(() => {
-        if (note != null) {
+        if (note != null && favorite == null) {
             setTitle(note.title);
             setText(note.text);
             setColor(note.color)
             setStatus(note.status)
+        }
+        else if(note == null && favorite != null){
+            setTitle(favorite.title);
+            setText(favorite.text);
+            setColor(favorite.color)
+            setStatus(favorite.status)
         }
     }, [note]);
     const noteSchema = yup.object({
@@ -62,6 +68,7 @@ const AddNote = ({ note,favorite, editNote, addNote, navigation }) => {
     const handleUpdate = () => {
         const updateNote = {
             ...note,
+            ...favorite,
             title: title.trim(),
             text: text.trim(),
             color: color,
@@ -154,8 +161,8 @@ const AddNote = ({ note,favorite, editNote, addNote, navigation }) => {
                     </MenuOptions>
                 </Menu>
                 <View style={[styles.buttonWarp, { alignSelf: 'flex-end' }]}>
-                    <TouchableOpacity onPress={note == undefined ? handleAdd : handleUpdate} style={[styles.addButton,{borderColor:color}]}>
-                        <Text>{note == undefined ? ("Add") : ("Edit")}</Text>
+                    <TouchableOpacity onPress={note == undefined && favorite == undefined ? handleAdd : handleUpdate} style={[styles.addButton,{borderColor:color}]}>
+                        <Text>{note == undefined && favorite == undefined ? ("Add") : ("Edit")}</Text>
                     </TouchableOpacity>
                 </View>
             </View>
@@ -229,7 +236,7 @@ const mapStateToProps = (state, ownProps) => {
     if ((note) => note.id === noteId) {
         return {
             note: state.notes.notes.find((note) => note.id === noteId),
-            note: state.notes.favorites.find((favorite) => favorite.id === noteId),
+            favorite: state.notes.favorites.find((favorite) => favorite.id === noteId),
         };
     }
     else {

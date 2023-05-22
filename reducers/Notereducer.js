@@ -17,7 +17,7 @@ const noteReducer = (state = initialState, action) => {
         notes: state.notes.map((note) =>
           note.id === action.payload.id ? action.payload : note),
         favorites: state.favorites.map((favorite) =>
-          favorite.id === action.payload.id ? action.payload : note),
+          favorite.id === action.payload.id ? action.payload : favorite),
       };
     case 'DELETE_NOTE':
       return {
