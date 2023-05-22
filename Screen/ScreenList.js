@@ -58,12 +58,13 @@ const NoteList = ({ notes, addToFavorite, deleteNote, navigation }) => {
         <View style={[styles.navigationContainer]}>
             <Text style={styles.paragraph}>Note.</Text>
             <TouchableOpacity style={styles.menuButton}>
-                <Icon name='lightbulb-o' color={'#E2E2E3'} size={30} style={{ paddingRight: 20 }} />
+                <Icon name='lightbulb-o' color={'#E2E2E3'} size={30} style={{ paddingRight: 35 }} />
                 <Text style={{ color: '#E2E2E3', fontSize: 20 }}>Note</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.menuButton} onPress={() => {
-                navigation.navigate('Favorite')
-            }}><Text style={{ color: '#E2E2E3', }}>Favorite</Text></TouchableOpacity>
+            <TouchableOpacity style={styles.menuButton} onPress={() => { navigation.navigate('Favorite') }}>
+                <Icon name='heart' color={'#E2E2E3'} size={30} style={{ paddingRight: 20 }}  />
+                <Text style={{ color: '#E2E2E3', fontSize: 20 }}>Favorite</Text>
+            </TouchableOpacity>
         </View>
     );
     // RENDER ITEM FLATLIST
@@ -98,7 +99,7 @@ const NoteList = ({ notes, addToFavorite, deleteNote, navigation }) => {
                             }}
                         >
                             <TouchableOpacity
-                                onPress={() => {handleAddFavorite({ item }) }}>
+                                onPress={() => { handleAddFavorite({ item }) }}>
                                 <Icon name='heart' color={'#ea4335'} size={30} />
                             </TouchableOpacity>
                         </View>

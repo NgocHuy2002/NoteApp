@@ -11,7 +11,7 @@ import Icon5 from 'react-native-vector-icons/FontAwesome5';
 import BouncyCheckbox from "react-native-bouncy-checkbox";
 
 
-const Favorite = ({ favorites, addNote, deleteNote, navigation }) => {
+const Favorite = ({ favorites, addNote, navigation }) => {
   const checkStatus = (check, id) => {
     if (check === true) {
       return (
@@ -56,12 +56,13 @@ const Favorite = ({ favorites, addNote, deleteNote, navigation }) => {
       <TouchableOpacity style={styles.menuButton} onPress={() => {
         navigation.navigate('List')
       }}>
-        <Icon name='lightbulb-o' color={'#E2E2E3'} size={30} style={{ paddingRight: 20 }} />
+        <Icon name='lightbulb-o' color={'#E2E2E3'} size={30} style={{ paddingRight: 35 }} />
         <Text style={{ color: '#E2E2E3', fontSize: 20 }}>Note</Text>
       </TouchableOpacity>
-      <TouchableOpacity style={styles.menuButton} onPress={() => {
-        navigation.navigate('Favorite')
-      }}><Text style={{ color: '#E2E2E3', }}>Favorite</Text></TouchableOpacity>
+      <TouchableOpacity style={styles.menuButton} onPress={() => { navigation.navigate('Favorite') }}>
+        <Icon name='heart' color={'#E2E2E3'} size={30} style={{ paddingRight: 20 }} />
+        <Text style={{ color: '#E2E2E3', fontSize: 20 }}>Favorite</Text>
+      </TouchableOpacity>
     </View>
   );
   // RENDER ITEM FLATLIST
