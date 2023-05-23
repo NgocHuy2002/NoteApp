@@ -10,8 +10,6 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import BouncyCheckbox from "react-native-bouncy-checkbox";
 import Icon_Ionicons from 'react-native-vector-icons/Ionicons';
 import { getItems } from '../extra/Selecter';
-import { Stack, Chip } from "@react-native-material/core";
-
 
 const NoteList = ({ notesList, editNote, deleteNote, navigation }) => {
     // -------------------------------State
@@ -77,23 +75,10 @@ const NoteList = ({ notesList, editNote, deleteNote, navigation }) => {
     }
     const filteredNotes = notesList.filter((note) =>
         note.text.trim().toLowerCase().includes(keyword.trim().toLowerCase()) ||
-        note.title.trim().toLowerCase().includes(keyword.trim().toLowerCase())
+        note.title.trim().toLowerCase().includes(keyword.trim().toLowerCase()) 
     );
-    // const caseStatus = () => {
-    //     switch (filterStatus) {
-    //         case true:
-    //             setFilterStatus('')
-    //             break;
-    //         case '':
-    //             setFilterStatus(false)
-    //             break;
-    //         case false:
-    //             setFilterStatus(true)
-    //             break;
-    //     }
-    // }
     const filteredStatus = notesList.filter((note) =>
-        note.status === true
+    note.status === true
     );
     // -------------------------------Render 
     const navigationView = () => (
@@ -192,12 +177,19 @@ const NoteList = ({ notesList, editNote, deleteNote, navigation }) => {
                         value={keyword}
                         onChangeText={setKeyword}
                     />
+                    <BouncyCheckbox
+                        style={styles.status}
+                        size={25}
+                        isChecked={false}
+                        onPress={() => { setFilterStatus(!filterStatus) }}
+                        fillColor="#E2E2E3"
+                    />
                 </View>
             </View>
             {/* ----- */}
             {/* LIST */}
             <FlatList
-                data={filterStatus === false ? filteredNotes : filteredStatus}
+                data={filterStatus === false ? filteredNotes: filteredStatus}
                 renderItem={renderItem}
                 keyExtractor={(item) => item.id.toString()}
             />
@@ -289,7 +281,6 @@ const styles = StyleSheet.create({
     status: {
         display: 'flex',
         position: 'absolute',
-        flexDirection:'row',
         right: 0,
     },
     footer: {
