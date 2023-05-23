@@ -2,25 +2,33 @@ import { Dimensions, StyleSheet, Text, View, FlatList, ToastAndroid, DrawerLayou
 import React, { useState, useRef } from 'react'
 import { TouchableOpacity, TouchableWithoutFeedback } from 'react-native';
 import { connect } from 'react-redux';
-import { deleteNote, addNote } from '../actions/noteAction';
+import { editNote } from '../actions/noteAction';
 import HyperlinkText from '../extra/HyperlinkText';
 import Swipeable from 'react-native-gesture-handler/Swipeable';
 import StatusBarCostum from '../extra/StatusBarCostum';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import Icon5 from 'react-native-vector-icons/FontAwesome5';
 import BouncyCheckbox from "react-native-bouncy-checkbox";
+import { getFilteredItems } from '../extra/Selecter';
 
-
-const Favorite = ({ favorites, addNote, navigation }) => {
-  const checkStatus = (check, id) => {
-    if (check === true) {
+const Favorite = ({ filteredItems, editNote, navigation }) => {
+  // ---------------------Khai bao state
+  const [favorites, setFavorites] = useState();
+  const [filterStatus, setFilterStatus] = useState(false);
+  const [status, setStatus] = useState();
+  const [keyword, setKeyword] = useState('')
+  const drawer = useRef(null);
+  const drawerPosition = 'left';
+  // --------------------- ACTION
+  const checkStatus = ({ item }) => {
+    if (item.status === true) {
       return (
         <View style={styles.status}>
           <BouncyCheckbox
             size={25}
             disableBuiltInState={true}
             isChecked={true}
-            onPress={() => { handleEditNote(id) }}
+            onPress={() => { changeStatus({ item }) }}
             fillColor="#E2E2E3"
           />
         </View>
@@ -33,23 +41,36 @@ const Favorite = ({ favorites, addNote, navigation }) => {
           size={25}
           disableBuiltInState={true}
           isChecked={false}
-          onPress={() => { handleEditNote(id) }}
+          onPress={() => { changeStatus({ item }) }}
           fillColor="#E2E2E3"
         />
       )
     }
   }
+  const changeStatus = ({ item }) => {
+    const updateStatus = !item.status;
+    setStatus(updateStatus);
+    const changeNoteStatus = {
+      ...item,
+      status: updateStatus,
+    };
+    editNote(changeNoteStatus)
+    // console.log(changeNoteStatus);
+  }
   const handleEditNote = (noteId) => {
     navigation.navigate('Add', { noteId });
   };
-  //DELETE
-  const returnNoteToList = ({ item }) => {
-    addNote(item)
-    ToastAndroid.show('Note have been remove from Favorite!', ToastAndroid.SHORT);
+  const returnNoteToList = async ({ item }) => {
+    const updatedFavorite = false; // Toggle the favorite value
+    setFavorites(updatedFavorite);
+    const addToFavorite = {
+      ...item,
+      favorite: updatedFavorite,
+    };
+    editNote(addToFavorite);
+    ToastAndroid.show('Note have been removed from favorite!', ToastAndroid.SHORT)
   }
-  const [keyword, setKeyword] = useState('')
-  const drawer = useRef(null);
-  const drawerPosition = 'left';
+  // ------------------- RENDER 
   const navigationView = () => (
     <View style={[styles.navigationContainer]}>
       <Text style={styles.paragraph}>Note.</Text>
@@ -65,7 +86,6 @@ const Favorite = ({ favorites, addNote, navigation }) => {
       </TouchableOpacity>
     </View>
   );
-  // RENDER ITEM FLATLIST
   const renderNoteItem = ({ item }) => (
     <View>
       <Swipeable
@@ -95,7 +115,7 @@ const Favorite = ({ favorites, addNote, navigation }) => {
         >
           <View style={[styles.card, { backgroundColor: item.color }]}>
             <View>
-              {checkStatus(item.status, item.id)}
+              {checkStatus({ item })}
               <Text style={[styles.title, { alignSelf: 'flex-start', color: '#E2E2E3' }]}>
                 {item.title}
               </Text>
@@ -106,10 +126,12 @@ const Favorite = ({ favorites, addNote, navigation }) => {
       </Swipeable>
     </View>
   );
-  // SEARCH
-  const filteredNotes = favorites.filter((note) =>
+  const filteredNotes = filteredItems.filter((note) =>
     note.text.trim().toLowerCase().includes(keyword.trim().toLowerCase()) ||
     note.title.trim().toLowerCase().includes(keyword.trim().toLowerCase())
+  );
+  const filteredStatus = filteredItems.filter((note) =>
+    note.status === true
   );
   return (
     <DrawerLayoutAndroid
@@ -135,12 +157,19 @@ const Favorite = ({ favorites, addNote, navigation }) => {
             value={keyword}
             onChangeText={setKeyword}
           />
+          <BouncyCheckbox
+            style={styles.status}
+            size={25}
+            isChecked={false}
+            onPress={() => { setFilterStatus(!filterStatus) }}
+            fillColor="#E2E2E3"
+          />
         </View>
       </View>
       {/* ----- */}
       {/* LIST */}
       <FlatList
-        data={filteredNotes}
+        data={filterStatus === false ? filteredNotes : filteredStatus}
         renderItem={renderNoteItem}
         keyExtractor={(item) => item.id.toString()}
       />
@@ -278,8 +307,8 @@ const styles = StyleSheet.create({
 })
 const mapStateToProps = (state) => ({
   notes: state.notes.notes,
-  favorites: state.notes.favorites,
+  filteredItems: getFilteredItems(state),
 });
 
 
-export default connect(mapStateToProps, { addNote, deleteNote })(Favorite);
+export default connect(mapStateToProps, { editNote })(Favorite);

@@ -19,30 +19,28 @@ import {
 
 
 
-const AddNote = ({ note,favorite, editNote, addNote, navigation }) => {
+const AddNote = ({ note, editNote, addNote, navigation }) => {
     const [title, setTitle] = useState('');
     const [text, setText] = useState('');
     const [status, setStatus] = useState(false);
     const [color, setColor] = useState('#202124')
+    const [favorite, setFavorite] = useState(false);
     useEffect(() => {
-        if (note != null && favorite == null) {
+        if (note != null) {
             setTitle(note.title);
             setText(note.text);
             setColor(note.color)
             setStatus(note.status)
-        }
-        else if(note == null && favorite != null){
-            setTitle(favorite.title);
-            setText(favorite.text);
-            setColor(favorite.color)
-            setStatus(favorite.status)
+            setFavorite(note.favorite)
         }
     }, [note]);
+    
     const noteSchema = yup.object({
         title: yup.string().min(0).max(100),
         text: yup.string().required('Context is none'),
         color: yup.string().required(''),
         status: yup.boolean().required(),
+        favorite: yup.boolean().required('Something wrong!!'),
     });
     const handleAdd = () => {
         const newNote = {
@@ -51,15 +49,16 @@ const AddNote = ({ note,favorite, editNote, addNote, navigation }) => {
             text,
             color,
             status,
+            favorite,
         };
         noteSchema.validate(newNote).then(() => {
             addNote(newNote);
             // console.log('add')
-            setTitle('')
+            setTitle('');
             setText('');
-            setColor('#FFF')
-            setStatus(false)
-            navigation.goBack()
+            setColor('#FFF');
+            setStatus(false);
+            navigation.goBack();
         }).catch(() => {
             // console.log('addF')
             navigation.navigate('List')
@@ -68,11 +67,11 @@ const AddNote = ({ note,favorite, editNote, addNote, navigation }) => {
     const handleUpdate = () => {
         const updateNote = {
             ...note,
-            ...favorite,
             title: title.trim(),
             text: text.trim(),
             color: color,
             status: status,
+            favorite:favorite,
         };
         noteSchema.validate(updateNote).then(() => {
             editNote(updateNote);
@@ -161,8 +160,8 @@ const AddNote = ({ note,favorite, editNote, addNote, navigation }) => {
                     </MenuOptions>
                 </Menu>
                 <View style={[styles.buttonWarp, { alignSelf: 'flex-end' }]}>
-                    <TouchableOpacity onPress={note == undefined && favorite == undefined ? handleAdd : handleUpdate} style={[styles.addButton,{borderColor:color}]}>
-                        <Text>{note == undefined && favorite == undefined ? ("Add") : ("Edit")}</Text>
+                    <TouchableOpacity onPress={note == undefined ? handleAdd : handleUpdate} style={[styles.addButton,{borderColor:color}]}>
+                        <Text>{note == undefined ? ("Add") : ("Edit")}</Text>
                     </TouchableOpacity>
                 </View>
             </View>
@@ -236,7 +235,6 @@ const mapStateToProps = (state, ownProps) => {
     if ((note) => note.id === noteId) {
         return {
             note: state.notes.notes.find((note) => note.id === noteId),
-            favorite: state.notes.favorites.find((favorite) => favorite.id === noteId),
         };
     }
     else {

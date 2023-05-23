@@ -17,9 +17,3 @@ export const deleteNote = (id) => {
     payload: id,
   };
 };
-export const addToFavorite = (note) => {
-  return {
-    type:'ADD_FAVORITE',
-    payload: note,
-  }
-}
