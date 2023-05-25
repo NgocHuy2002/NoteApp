@@ -1,3 +1,4 @@
+import 'react-native-gesture-handler';
 import React from 'react';
 import { Provider } from 'react-redux';
 import { PersistGate } from 'redux-persist/integration/react';
@@ -12,19 +13,21 @@ import Favorite from './Screen/Favorite';
 const Stack = createStackNavigator();
 const App = () => {
   return (
-    <NavigationContainer>
-      <Provider store={store}>
+    <Provider store={store}>
+      <NavigationContainer>
+
         <PersistGate loading={null} persistor={persistor}>
-        <MenuProvider>
-          <Stack.Navigator screenOptions={{headerShown:false}}>
-            <Stack.Screen name="List" component={ScreenList}/>
-            <Stack.Screen name="Add" component={ScreenAdd} />
-            <Stack.Screen name="Favorite" component={Favorite} />
-          </Stack.Navigator>
+          <MenuProvider>
+            <Stack.Navigator screenOptions={{ headerShown: false }}>
+              <Stack.Screen name="List" component={ScreenList} />
+              <Stack.Screen name="Add" component={ScreenAdd} />
+              <Stack.Screen name="Favorite" component={Favorite} />
+            </Stack.Navigator>
           </MenuProvider>
         </PersistGate>
-      </Provider>
-    </NavigationContainer>
+
+      </NavigationContainer>
+    </Provider>
   );
 };
 

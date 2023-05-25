@@ -164,9 +164,7 @@ const NoteList = ({ notesList, editNote, deleteNote, navigation }) => {
             <StatusBarCostum />
             {/* HEADER */}
             <View style={styles.header}>
-                <TouchableWithoutFeedback
-                    onPress={() => drawer.current.openDrawer()}
-                >
+                <TouchableWithoutFeedback onPress={() => drawer.current.openDrawer()}>
                     <Icon name="bars" size={20} color="#E2E2E3" />
                 </TouchableWithoutFeedback>
                 <View style={styles.searchWarp}>
