@@ -1,24 +1,22 @@
-import { Dimensions, StyleSheet, Text, View, FlatList, ToastAndroid, DrawerLayoutAndroid, TextInput } from 'react-native'
+import { Dimensions, StyleSheet, Text, View, FlatList, ToastAndroid, TextInput } from 'react-native'
 import React, { useState, useRef, useMemo } from 'react'
 import { TouchableOpacity, TouchableWithoutFeedback } from 'react-native';
 import { connect } from 'react-redux';
 import { deleteNote, editNote } from '../actions/noteAction';
 import HyperlinkText from '../extra/HyperlinkText';
 import Swipeable from 'react-native-gesture-handler/Swipeable';
-import StatusBarCostum from '../extra/StatusBarCostum';
+import StatusBarCostum from '../extra/StatusBarCustom';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import BouncyCheckbox from "react-native-bouncy-checkbox";
 import Icon_Ionicons from 'react-native-vector-icons/Ionicons';
-import { getItems } from '../extra/Selecter';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
-const NoteList = ({ notesList, editNote, deleteNote, navigation }) => {
+const NoteList = ({ notes, editNote, deleteNote, navigation }) => {
     // -------------------------------State
     const [favorites, setFavorites] = useState();
     const [filterStatus, setFilterStatus] = useState(false);
     const [status, setStatus] = useState();
     const [keyword, setKeyword] = useState('')
-    const drawer = useRef(null);
-    const drawerPosition = 'left';
 
     // -------------------------------Action
     const checkStatus = ({ item }) => {
@@ -73,27 +71,14 @@ const NoteList = ({ notesList, editNote, deleteNote, navigation }) => {
         editNote(addToFavorite);
         ToastAndroid.show('Note have add to favorite!', ToastAndroid.SHORT)
     }
-    const filteredNotes = notesList.filter((note) =>
+    const filteredNotes = notes.filter((note) =>
         note.text.trim().toLowerCase().includes(keyword.trim().toLowerCase()) ||
-        note.title.trim().toLowerCase().includes(keyword.trim().toLowerCase()) 
+        note.title.trim().toLowerCase().includes(keyword.trim().toLowerCase())
     );
-    const filteredStatus = notesList.filter((note) =>
-    note.status === true
+    const filteredStatus = notes.filter((note) =>
+        note.status === true
     );
     // -------------------------------Render 
-    const navigationView = () => (
-        <View style={[styles.navigationContainer]}>
-            <Text style={styles.paragraph}>Note.</Text>
-            <TouchableOpacity style={styles.menuButton}>
-                <Icon name='lightbulb-o' color={'#E2E2E3'} size={30} style={{ paddingRight: 35 }} />
-                <Text style={{ color: '#E2E2E3', fontSize: 20 }}>Note</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.menuButton} onPress={() => { navigation.navigate('Favorite') }}>
-                <Icon name='heart' color={'#E2E2E3'} size={30} style={{ paddingRight: 20 }} />
-                <Text style={{ color: '#E2E2E3', fontSize: 20 }}>Favorite</Text>
-            </TouchableOpacity>
-        </View>
-    );
     const renderItem = ({ item }) => (
         <View>
             <Swipeable
@@ -151,20 +136,13 @@ const NoteList = ({ notesList, editNote, deleteNote, navigation }) => {
             </Swipeable>
         </View>
     );
-
     // -------------------------------RETURN
     return (
-        <DrawerLayoutAndroid
-            style={styles.container}
-            ref={drawer}
-            drawerWidth={250}
-            drawerPosition={drawerPosition}
-            renderNavigationView={navigationView}
-        >
+        <SafeAreaView style={styles.container}>
             <StatusBarCostum />
             {/* HEADER */}
             <View style={styles.header}>
-                <TouchableWithoutFeedback onPress={() => drawer.current.openDrawer()}>
+                <TouchableWithoutFeedback onPress={() => navigation.openDrawer()}>
                     <Icon name="bars" size={20} color="#E2E2E3" />
                 </TouchableWithoutFeedback>
                 <View style={styles.searchWarp}>
@@ -187,7 +165,7 @@ const NoteList = ({ notesList, editNote, deleteNote, navigation }) => {
             {/* ----- */}
             {/* LIST */}
             <FlatList
-                data={filterStatus === false ? filteredNotes: filteredStatus}
+                data={filterStatus === false ? filteredNotes : filteredStatus}
                 renderItem={renderItem}
                 keyExtractor={(item) => item.id.toString()}
             />
@@ -204,7 +182,7 @@ const NoteList = ({ notesList, editNote, deleteNote, navigation }) => {
                 </View >
             </View>
             {/* ----- */}
-        </DrawerLayoutAndroid >
+        </SafeAreaView>
     )
 }
 const styles = StyleSheet.create({
@@ -252,7 +230,6 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         borderRadius: 35,
         marginBottom: 10,
-        marginTop: 30
     },
     searchWarp: {
         width: '85%',
@@ -338,7 +315,6 @@ const styles = StyleSheet.create({
 const mapStateToProps = (state) => {
     return {
         notes: state.notes.notes,
-        notesList: getItems(state),
     };
 };
 

@@ -4,12 +4,14 @@ import { TextInput, TouchableOpacity } from 'react-native-gesture-handler'
 import { connect } from 'react-redux';
 import { addNote } from '../actions/noteAction';
 import { editNote } from '../actions/noteAction';
-import StatusBarCostum from '../extra/StatusBarCostum';
+import StatusBarCostum from '../extra/StatusBarCustom';
 import * as yup from 'yup';
 import BouncyCheckbox from "react-native-bouncy-checkbox";
 import { renderers } from 'react-native-popup-menu';
 const { SlideInMenu } = renderers;
 import Icon from 'react-native-vector-icons/FontAwesome';
+import { Formik } from 'formik';
+
 import {
     Menu,
     MenuOptions,
@@ -23,15 +25,21 @@ const AddNote = ({ note, editNote, addNote, navigation }) => {
     const [title, setTitle] = useState('');
     const [text, setText] = useState('');
     const [status, setStatus] = useState(false);
-    const [color, setColor] = useState('#202124')
+    const [color, setColor] = useState()
     const [favorite, setFavorite] = useState(false);
     useEffect(() => {
         if (note != null) {
             setTitle(note.title);
             setText(note.text);
-            setColor(note.color)
-            setStatus(note.status)
-            setFavorite(note.favorite)
+            setColor(note.color);
+            setStatus(note.status);
+            setFavorite(note.favorite);
+        }else{
+            setTitle('');
+            setText('');
+            setColor('#202124');
+            setStatus(false);
+            setFavorite(false);
         }
     }, [note]);
     
@@ -56,7 +64,7 @@ const AddNote = ({ note, editNote, addNote, navigation }) => {
             // console.log('add')
             setTitle('');
             setText('');
-            setColor('#FFF');
+            setColor('#202124');
             setStatus(false);
             navigation.goBack();
         }).catch(() => {
@@ -75,8 +83,11 @@ const AddNote = ({ note, editNote, addNote, navigation }) => {
         };
         noteSchema.validate(updateNote).then(() => {
             editNote(updateNote);
-            setStatus(false)
-            navigation.goBack()
+            setTitle('');
+            setText('');
+            setColor('#202124');
+            setStatus(false);
+            navigation.goBack();
         }).catch(() => {
             navigation.navigate('List')
         })

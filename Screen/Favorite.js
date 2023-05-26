@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import { editNote } from '../actions/noteAction';
 import HyperlinkText from '../extra/HyperlinkText';
 import Swipeable from 'react-native-gesture-handler/Swipeable';
-import StatusBarCostum from '../extra/StatusBarCostum';
+import StatusBarCostum from '../extra/StatusBarCustom';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import Icon5 from 'react-native-vector-icons/FontAwesome5';
 import BouncyCheckbox from "react-native-bouncy-checkbox";
@@ -134,18 +134,19 @@ const Favorite = ({ filteredItems, editNote, navigation }) => {
     note.status === true
   );
   return (
-    <DrawerLayoutAndroid
-      style={styles.container}
-      ref={drawer}
-      drawerWidth={250}
-      drawerPosition={drawerPosition}
-      renderNavigationView={navigationView}
-    >
+    // <DrawerLayoutAndroid
+    //   style={styles.container}
+    //   ref={drawer}
+    //   drawerWidth={250}
+    //   drawerPosition={drawerPosition}
+    //   renderNavigationView={navigationView}
+    // >
+    <View style={styles.container}>
       <StatusBarCostum />
       {/* HEADER */}
       <View style={styles.header}>
         <TouchableWithoutFeedback
-          onPress={() => drawer.current.openDrawer()}
+          onPress={() => navigation.openDrawer()}
         >
           <Icon name="bars" size={20} color="#E2E2E3" />
         </TouchableWithoutFeedback>
@@ -174,7 +175,7 @@ const Favorite = ({ filteredItems, editNote, navigation }) => {
         keyExtractor={(item) => item.id.toString()}
       />
       {/* ----- */}
-    </DrawerLayoutAndroid >
+    </View>
   )
 }
 const styles = StyleSheet.create({
