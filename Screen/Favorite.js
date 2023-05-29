@@ -1,8 +1,11 @@
-import { Dimensions, StyleSheet, Text, View, FlatList, ToastAndroid, DrawerLayoutAndroid, TextInput } from 'react-native'
-import React, { useState, useRef } from 'react'
-import { TouchableOpacity, TouchableWithoutFeedback } from 'react-native';
+import {
+  Dimensions, StyleSheet, Text, View, FlatList, ToastAndroid, TextInput,
+  Platform, Alert, TouchableOpacity, TouchableWithoutFeedback
+} from 'react-native';
+import React, { useState, useRef, useEffect } from 'react';
 import { connect } from 'react-redux';
 import { editNote } from '../actions/noteAction';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import HyperlinkText from '../extra/HyperlinkText';
 import Swipeable from 'react-native-gesture-handler/Swipeable';
 import StatusBarCostum from '../extra/StatusBarCustom';
@@ -12,7 +15,7 @@ import BouncyCheckbox from "react-native-bouncy-checkbox";
 import { getFilteredItems } from '../extra/Selecter';
 
 const Favorite = ({ filteredItems, editNote, navigation }) => {
-  // ---------------------Khai bao state
+  // ---------------------State
   const [favorites, setFavorites] = useState();
   const [filterStatus, setFilterStatus] = useState(false);
   const [status, setStatus] = useState();
@@ -62,30 +65,19 @@ const Favorite = ({ filteredItems, editNote, navigation }) => {
   };
   const returnNoteToList = async ({ item }) => {
     const updatedFavorite = false; // Toggle the favorite value
-    setFavorites(updatedFavorite);
     const addToFavorite = {
       ...item,
       favorite: updatedFavorite,
     };
     editNote(addToFavorite);
+    if(Platform.OS === 'android'){
     ToastAndroid.show('Note have been removed from favorite!', ToastAndroid.SHORT)
+    }
+    else{
+      Alert.alert('Note have been removed from favorite!');
+    }
   }
   // ------------------- RENDER 
-  const navigationView = () => (
-    <View style={[styles.navigationContainer]}>
-      <Text style={styles.paragraph}>Note.</Text>
-      <TouchableOpacity style={styles.menuButton} onPress={() => {
-        navigation.navigate('List')
-      }}>
-        <Icon name='lightbulb-o' color={'#E2E2E3'} size={30} style={{ paddingRight: 35 }} />
-        <Text style={{ color: '#E2E2E3', fontSize: 20 }}>Note</Text>
-      </TouchableOpacity>
-      <TouchableOpacity style={styles.menuButton} onPress={() => { navigation.navigate('Favorite') }}>
-        <Icon name='heart' color={'#E2E2E3'} size={30} style={{ paddingRight: 20 }} />
-        <Text style={{ color: '#E2E2E3', fontSize: 20 }}>Favorite</Text>
-      </TouchableOpacity>
-    </View>
-  );
   const renderNoteItem = ({ item }) => (
     <View>
       <Swipeable
@@ -134,14 +126,7 @@ const Favorite = ({ filteredItems, editNote, navigation }) => {
     note.status === true
   );
   return (
-    // <DrawerLayoutAndroid
-    //   style={styles.container}
-    //   ref={drawer}
-    //   drawerWidth={250}
-    //   drawerPosition={drawerPosition}
-    //   renderNavigationView={navigationView}
-    // >
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       <StatusBarCostum />
       {/* HEADER */}
       <View style={styles.header}>
@@ -175,7 +160,7 @@ const Favorite = ({ filteredItems, editNote, navigation }) => {
         keyExtractor={(item) => item.id.toString()}
       />
       {/* ----- */}
-    </View>
+    </SafeAreaView>
   )
 }
 const styles = StyleSheet.create({
@@ -223,7 +208,6 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderRadius: 35,
     marginBottom: 10,
-    marginTop: 30
   },
   searchWarp: {
     width: '85%',

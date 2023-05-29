@@ -1,5 +1,6 @@
 import 'react-native-gesture-handler';
 import React from 'react';
+import { Platform } from 'react-native';
 import { Provider } from 'react-redux';
 import { PersistGate } from 'redux-persist/integration/react';
 import { NavigationContainer } from '@react-navigation/native';
@@ -11,10 +12,10 @@ import { MenuProvider } from 'react-native-popup-menu';
 import Favorite from './Screen/Favorite';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import CustomDrawer from './extra/CustomDrawer';
-import { createStackNavigator } from '@react-navigation/stack';
+import * as eva from '@eva-design/eva';
+import { ApplicationProvider } from '@ui-kitten/components';
 
 const Drawer = createDrawerNavigator();
-const Stack = createStackNavigator();
 <CustomDrawer />
 const App = () => {
   return (
@@ -29,7 +30,8 @@ const App = () => {
                 drawerActiveBackgroundColor: '#374955',
                 drawerItemStyle: { borderRadius: 30 },
                 activeTintColor: '#6EB7DC',
-                drawerInactiveTintColor: '#D2E5F3'
+                drawerInactiveTintColor: '#D2E5F3',
+                swipeEnabled: false,
               }}
               drawerContent={(props) => <CustomDrawer{...props} />}
             >
@@ -37,15 +39,15 @@ const App = () => {
                 drawerIcon: () => (
                   <Icon name='lightbulb-o' color={'#D2E5F3'} size={30} style={{ paddingRight: 35 }} />
                 )
-              }}/>
+              }} />
               <Drawer.Screen name="Favorite" component={Favorite} options={{
                 drawerIcon: () => (
                   <Icon name='heart' color={'#D2E5F3'} size={30} style={{ paddingRight: 20 }} />
                 )
-              }}/>
+              }} />
               <Drawer.Screen name="Add" component={ScreenAdd} options={{
-                drawerItemStyle: { height: 0 }
-              }}/>
+                drawerItemStyle: { height: 0 },
+              }} />
             </Drawer.Navigator>
           </MenuProvider>
         </PersistGate>
@@ -54,4 +56,9 @@ const App = () => {
   );
 };
 
-export default App;
+export default () =>
+(
+  <ApplicationProvider  {...eva} theme={eva.light}>
+    <App/>
+  </ApplicationProvider>
+);

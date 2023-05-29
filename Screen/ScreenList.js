@@ -1,12 +1,14 @@
-import { Dimensions, StyleSheet, Text, View, FlatList, ToastAndroid, TextInput } from 'react-native'
-import React, { useState, useRef, useMemo } from 'react'
-import { TouchableOpacity, TouchableWithoutFeedback } from 'react-native';
+import {
+    Dimensions, StyleSheet, Text, View, FlatList, ToastAndroid, TextInput,
+    Platform, Alert, TouchableOpacity, TouchableWithoutFeedback
+} from 'react-native';
+import React, { useState, useRef, useMemo } from 'react';
 import { connect } from 'react-redux';
 import { deleteNote, editNote } from '../actions/noteAction';
 import HyperlinkText from '../extra/HyperlinkText';
 import Swipeable from 'react-native-gesture-handler/Swipeable';
 import StatusBarCostum from '../extra/StatusBarCustom';
-import Icon from 'react-native-vector-icons/FontAwesome';
+import Icon5 from 'react-native-vector-icons/FontAwesome5';
 import BouncyCheckbox from "react-native-bouncy-checkbox";
 import Icon_Ionicons from 'react-native-vector-icons/Ionicons';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -43,7 +45,7 @@ const NoteList = ({ notes, editNote, deleteNote, navigation }) => {
                 />
             )
         }
-    }
+    };
     const changeStatus = ({ item }) => {
         const updateStatus = !item.status;
         setStatus(updateStatus);
@@ -53,23 +55,46 @@ const NoteList = ({ notes, editNote, deleteNote, navigation }) => {
         };
         editNote(changeNoteStatus)
         // console.log(changeNoteStatus);
-    }
+    };
     const handleEditNote = (noteId) => {
         navigation.navigate('Add', { noteId });
     };
     const handleDeleteNote = (noteId) => {
         deleteNote(noteId)
-        ToastAndroid.show('Note have been delete!', ToastAndroid.SHORT);
+        if (Platform.OS === 'android') {
+            ToastAndroid.show('Note have been delete!', ToastAndroid.SHORT);
+        }
+        else {
+            Alert.alert('Note have been delete!')
+        }
     };
     const handleAddFavorite = async ({ item }) => {
-        const updatedFavorite = true; // Toggle the favorite value
-        setFavorites(updatedFavorite);
+        const updatedFavorite = true;
         const addToFavorite = {
             ...item,
             favorite: updatedFavorite,
         };
         editNote(addToFavorite);
-        ToastAndroid.show('Note have add to favorite!', ToastAndroid.SHORT)
+        if (Platform.OS === 'android') {
+            ToastAndroid.show('Note have add to favorite!', ToastAndroid.SHORT)
+        }
+        else {
+            Alert.alert('Note have add to favorite!')
+        }
+    }
+    const handleRemoveFavorite = async ({ item }) => {
+        const updatedFavorite = false; // Toggle the favorite value
+        const addToFavorite = {
+            ...item,
+            favorite: updatedFavorite,
+        };
+        editNote(addToFavorite);
+        if (Platform.OS === 'android') {
+            ToastAndroid.show('Note have been removed from favorite!', ToastAndroid.SHORT)
+        }
+        else {
+            Alert.alert('Note have been removed from favorite!')
+        }
     }
     const filteredNotes = notes.filter((note) =>
         note.text.trim().toLowerCase().includes(keyword.trim().toLowerCase()) ||
@@ -94,7 +119,7 @@ const NoteList = ({ notes, editNote, deleteNote, navigation }) => {
                         >
                             <TouchableOpacity
                                 onPress={() => { handleDeleteNote(item.id) }}>
-                                <Icon name='trash-o' color={'#ea4335'} size={30} />
+                                <Icon5 name='trash' color={'#ea4335'} size={30} />
                             </TouchableOpacity>
                         </View>
                     )
@@ -110,8 +135,8 @@ const NoteList = ({ notes, editNote, deleteNote, navigation }) => {
                             }}
                         >
                             <TouchableOpacity
-                                onPress={() => { handleAddFavorite({ item }) }}>
-                                <Icon name='heart' color={'#ea4335'} size={30} />
+                                onPress={() => { item.favorite == true ? handleRemoveFavorite({ item }) : handleAddFavorite({ item }) }}>
+                                <Icon5 name={item.favorite == true ? 'heart-broken' : 'heart'} color={'#ea4335'} size={30} />
                             </TouchableOpacity>
                         </View>
                     )
@@ -143,7 +168,7 @@ const NoteList = ({ notes, editNote, deleteNote, navigation }) => {
             {/* HEADER */}
             <View style={styles.header}>
                 <TouchableWithoutFeedback onPress={() => navigation.openDrawer()}>
-                    <Icon name="bars" size={20} color="#E2E2E3" />
+                    <Icon5 name="bars" size={20} color="#E2E2E3" />
                 </TouchableWithoutFeedback>
                 <View style={styles.searchWarp}>
                     <TextInput
