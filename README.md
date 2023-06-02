@@ -19,4 +19,5 @@ This is a React Native project showcasing various features and components.
 - Tìm kiếm (18/5)
 - Screen thêm và sửa vào 1 (18/5)
 - Vuốt để thêm vào yêu thích (19/5)
+- Fix bug (29/5)
 
