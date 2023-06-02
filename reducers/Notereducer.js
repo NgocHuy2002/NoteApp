@@ -1,5 +1,7 @@
 const initialState = {
   notes: [],
+  searchKeyword: "",
+  route:'',
 };
 
 const noteReducer = (state = initialState, action) => {
@@ -20,6 +22,16 @@ const noteReducer = (state = initialState, action) => {
         ...state,
         notes: state.notes.filter((note) => note.id !== action.payload),
       };
+    case 'SET_SEARCH_KEYWORD':
+      return {
+        ...state,
+        searchKeyword: action.payload,
+      };
+      case 'SET_ROUTE':
+        return {
+          ...state,
+          route: action.payload,
+        };
     default:
       return state;
   }

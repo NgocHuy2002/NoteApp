@@ -2,8 +2,7 @@ import { Dimensions, StyleSheet, ScrollView, Text, View, Keyboard, BackHandler, 
 import React, { useState, useEffect, useRef } from 'react';
 import { TextInput, TouchableOpacity, TouchableWithoutFeedback } from 'react-native-gesture-handler';
 import { connect } from 'react-redux';
-import { addNote } from '../actions/noteAction';
-import { editNote } from '../actions/noteAction';
+import { addNote, editNote } from '../actions/noteAction';
 import StatusBarCostum from '../extra/StatusBarCustom';
 import Icon5 from 'react-native-vector-icons/FontAwesome5';
 import * as yup from 'yup';
