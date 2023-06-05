@@ -1,7 +1,7 @@
-import { StyleSheet, Text, View, StatusBar, SafeAreaView } from 'react-native'
+import { StyleSheet, StatusBar, SafeAreaView } from 'react-native'
 import React from 'react'
 
-export default function StatusBarCostum() {
+export default function StatusBarCustom() {
     return (
         <SafeAreaView>
             <StatusBar

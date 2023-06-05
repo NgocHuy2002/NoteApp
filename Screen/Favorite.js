@@ -17,15 +17,14 @@ import { editNote, setSearchKeyword, setRoute } from "../actions/noteAction";
 import { SafeAreaView } from "react-native-safe-area-context";
 import HyperlinkText from "../extra/HyperlinkText";
 import Swipeable from "react-native-gesture-handler/Swipeable";
-import StatusBarCostum from "../extra/StatusBarCustom";
+import StatusBarCustom from "../extra/StatusBarCustom";
 import Icon from "react-native-vector-icons/FontAwesome";
 import Icon5 from "react-native-vector-icons/FontAwesome5";
 import BouncyCheckbox from "react-native-bouncy-checkbox";
-import { getFilteredItems, getFilteredItemsWithDone } from "../extra/Selecter";
+import { getFilteredItems } from "../extra/Selecter";
 import { useNavigationState } from "@react-navigation/native";
 
 const Favorite = ({
-  filteredItemsWithStatus,
   notes,
   filteredItems,
   setSearchKeyword,
@@ -36,6 +35,8 @@ const Favorite = ({
   // ---------------------State
   const [filterStatus, setFilterStatus] = useState(false);
   const [status, setStatus] = useState();
+  const [keyword, setKeyword] = useState('');
+  const [favorite, setFavorite] = useState(true);
   const navigationState = useNavigationState((state) => state);
   // --------------------useEffect
   useEffect(() => {
@@ -81,16 +82,12 @@ const Favorite = ({
       status: updateStatus,
     };
     editNote(changeNoteStatus);
-    // console.log(changeNoteStatus);
-  };
-  const handleSetKeyword = (keyword) => {
-    setSearchKeyword(keyword);
   };
   const handleEditNote = (noteId) => {
     navigation.navigate("Add", { noteId });
   };
   const returnNoteToList = async ({ item }) => {
-    const updatedFavorite = false; // Toggle the favorite value
+    const updatedFavorite = false;
     const addToFavorite = {
       ...item,
       favorite: updatedFavorite,
@@ -156,7 +153,7 @@ const Favorite = ({
   );
   return (
     <SafeAreaView style={styles.container}>
-      <StatusBarCostum />
+      <StatusBarCustom />
       {/* HEADER */}
       <View style={styles.header}>
         <TouchableWithoutFeedback onPress={() => navigation.openDrawer()}>
@@ -167,8 +164,8 @@ const Favorite = ({
             style={styles.search}
             placeholder="Search"
             placeholderTextColor="#E2E2E3"
-            value={notes.searchKeyword}
-            onChangeText={handleSetKeyword}
+            value={keyword}
+            onChangeText={setKeyword}
           />
           <BouncyCheckbox
             style={styles.status}
@@ -184,7 +181,7 @@ const Favorite = ({
       {/* ----- */}
       {/* LIST */}
       <FlatList
-        data={filterStatus === true ? filteredItemsWithStatus : filteredItems}
+        data={filteredItems(keyword,filterStatus)}
         renderItem={renderNoteItem}
         keyExtractor={(item) => item.id.toString()}
       />
@@ -325,8 +322,8 @@ const styles = StyleSheet.create({
 const mapStateToProps = (state) => {
   return {
     notes: state.notes,
-    filteredItems: getFilteredItems(state),
-    filteredItemsWithStatus: getFilteredItemsWithDone(state),
+    filteredItems: (keyword,filterStatus) => getFilteredItems(state, keyword,filterStatus),
+    // filteredItemsWithStatus: getFilteredItemsWithDone(state),
   };
 };
 export default connect(mapStateToProps, {
