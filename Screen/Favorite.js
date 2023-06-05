@@ -27,7 +27,6 @@ import { useNavigationState } from "@react-navigation/native";
 const Favorite = ({
   notes,
   filteredItems,
-  setSearchKeyword,
   editNote,
   setRoute,
   navigation,
@@ -36,7 +35,6 @@ const Favorite = ({
   const [filterStatus, setFilterStatus] = useState(false);
   const [status, setStatus] = useState();
   const [keyword, setKeyword] = useState('');
-  const [favorite, setFavorite] = useState(true);
   const navigationState = useNavigationState((state) => state);
   // --------------------useEffect
   useEffect(() => {
@@ -323,7 +321,6 @@ const mapStateToProps = (state) => {
   return {
     notes: state.notes,
     filteredItems: (keyword,filterStatus) => getFilteredItems(state, keyword,filterStatus),
-    // filteredItemsWithStatus: getFilteredItemsWithDone(state),
   };
 };
 export default connect(mapStateToProps, {

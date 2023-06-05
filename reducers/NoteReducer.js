@@ -1,6 +1,5 @@
 const initialState = {
   notes: [],
-  searchKeyword: "",
   route:'',
 };
 
@@ -21,11 +20,6 @@ const noteReducer = (state = initialState, action) => {
       return {
         ...state,
         notes: state.notes.filter((note) => note.id !== action.payload),
-      };
-    case 'SET_SEARCH_KEYWORD':
-      return {
-        ...state,
-        searchKeyword: action.payload,
       };
       case 'SET_ROUTE':
         return {
