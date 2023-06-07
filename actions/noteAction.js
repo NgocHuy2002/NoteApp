@@ -17,11 +17,3 @@ export const deleteNote = (id) => {
     payload: id,
   };
 };
-export const setSearchKeyword = (keyword) => ({
-  type: 'SET_SEARCH_KEYWORD',
-  payload: keyword,
-});
-export const setRoute = (route) => ({
-  type: 'SET_ROUTE',
-  payload: route,
-});
