@@ -1,3 +1,9 @@
+// React
+import React, { useState, useMemo, useEffect } from "react";
+// Redux
+import { connect } from "react-redux";
+import { deleteNote, editNote } from "../actions/noteAction";
+// React Native
 import {
   Dimensions,
   StyleSheet,
@@ -11,42 +17,89 @@ import {
   TouchableOpacity,
   TouchableWithoutFeedback,
   Modal,
-  Button,
 } from "react-native";
-import React, { useState, useRef, useEffect } from "react";
-import { connect } from "react-redux";
-import { deleteNote, editNote } from "../actions/noteAction";
-import HyperlinkText from "../extra/HyperlinkText";
+import { useNavigationState } from "@react-navigation/native";
+import { SafeAreaView } from "react-native-safe-area-context";
+// Third-party Libraries
+import moment from "moment";
 import Swipeable from "react-native-gesture-handler/Swipeable";
+import BouncyCheckbox from "react-native-bouncy-checkbox";
+import HyperlinkText from "../extra/HyperlinkText";
 import StatusBarCustom from "../extra/StatusBarCustom";
 import Icon5 from "react-native-vector-icons/FontAwesome5";
-import BouncyCheckbox from "react-native-bouncy-checkbox";
 import Icon_Ionicons from "react-native-vector-icons/Ionicons";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { useNavigationState } from "@react-navigation/native";
+// Custom Components
 import { getFilteredItems } from "../extra/Selecter";
-import moment from "moment";
+import ButtonCustom from "../extra/ButtonCustom";
 
 const NoteList = ({
   filteredItems,
-  notes,
   editNote,
   deleteNote,
   navigation,
 }) => {
   // -------------------------------State
   const [keyword, setKeyword] = useState("");
-  const [filterStatus, setFilterStatus] = useState(false);
+  const [filterStatus, setFilterStatus] = useState();
   const [favorite, setFavorite] = useState();
-  const [filterDate, setFilterDate] = useState("");
+  const [filterDate, setFilterDate] = useState([]);
   const [status, setStatus] = useState();
   const navigationState = useNavigationState((state) => state);
   const [modalVisible, setModalVisible] = useState(false);
+  const [selectedButton, setSelectedButton] = useState(null);
+    // Constants
+  const { startOfDay, endOfDay, startOfWeek, endOfWeek, startOfMonth, endOfMonth } = useMemo(() => {
+    const now = Date.now();
+    return {
+      startOfDay: moment(now).startOf("day"),
+      endOfDay: moment(now).endOf("day"),
+      startOfWeek: moment(now).startOf("week"),
+      endOfWeek: moment(now).endOf("week"),
+      startOfMonth: moment().startOf("month"),
+      endOfMonth: moment().endOf("month"),
+    };
+  }, []);
+  // ----------------------
+  const filterOptions = [
+    {
+      text: "All",
+      onPress: () => {
+        setFilterStatus();
+        setFilterDate([]);
+        setSelectedButton(null);
+      },
+    },
+    {
+      text: "Today",
+      onPress: () => handleOptionPress([startOfDay, endOfDay], "T"),
+      active: selectedButton === "T",
+    },
+    {
+      text: "This week",
+      onPress: () => handleOptionPress([startOfWeek, endOfWeek], "TW"),
+      active: selectedButton === "TW",
+    },
+    {
+      text: "Last week",
+      onPress: () => handleOptionPress([startOfWeek], "LW"),
+      active: selectedButton === "LW",
+    },
+    {
+      text: "This month",
+      onPress: () => handleOptionPress([startOfMonth, endOfMonth], "TM"),
+      active: selectedButton === "TM",
+    },
+  ];
+
   // -------------------------------useEffect
   useEffect(() => {
-    setFavorite(false);
+    setFavorite();
   }, [navigationState, favorite]);
-  // -------------------------------Action
+  // -------------------------------Event handlers
+  const handleOptionPress = (dateRange, button) => {
+    setFilterDate(dateRange);
+    setSelectedButton(button);
+  };
   const checkStatus = ({ item }) => {
     if (item.status === true) {
       return (
@@ -232,87 +285,20 @@ const NoteList = ({
         }}
       >
         <TouchableOpacity
-          style={{
-            flex: 1,
-          }}
+          style={{ flex: 1 }}
           activeOpacity={1}
           onPressOut={closeModal}
         >
           <View style={styles.centeredView}>
             <View style={styles.modalView}>
-              <TouchableOpacity
-                style={[styles.button, styles.buttonClose]}
-                onPress={() => setFilterStatus(!filterStatus)}
-              >
-                <Text
-                  style={[
-                    styles.textStyle,
-                    { color: filterStatus ? "#3D71BF" : "#E2E2E3" },
-                  ]}
-                >
-                  Completed
-                </Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={[styles.button, styles.buttonClose]}
-                onPress={() =>
-                  filterDate !== "T" ? setFilterDate("T") : setFilterDate("")
-                }
-              >
-                <Text
-                  style={[
-                    styles.textStyle,
-                    { color: filterDate === "T" ? "#3D71BF" : "#E2E2E3" },
-                  ]}
-                >
-                  Today
-                </Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={[styles.button, styles.buttonClose]}
-                onPress={() =>
-                  filterDate !== "TW" ? setFilterDate("TW") : setFilterDate("")
-                }
-              >
-                <Text
-                  style={[
-                    styles.textStyle,
-                    { color: filterDate === "TW" ? "#3D71BF" : "#E2E2E3" },
-                  ]}
-                >
-                  This week
-                </Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={[styles.button, styles.buttonClose]}
-                onPress={() =>
-                  filterDate !== "LW" ? setFilterDate("LW") : setFilterDate("")
-                }
-              >
-                <Text
-                  style={[
-                    styles.textStyle,
-                    { color: filterDate === "LW" ? "#3D71BF" : "#E2E2E3" },
-                  ]}
-                >
-                  Last week
-                </Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={[styles.button, styles.buttonClose]}
-                onPress={() =>
-                  filterDate !== "TM" ? setFilterDate("TM") : setFilterDate("")
-                }
-              >
-                <Text
-                  style={[
-                    styles.textStyle,
-                    { color: filterDate === "TM" ? "#3D71BF" : "#E2E2E3" },
-                  ]}
-                >
-                  This month
-                </Text>
-              </TouchableOpacity>
+              {filterOptions.map((option, index) => (
+                <ButtonCustom
+                  key={index}
+                  text={option.text}
+                  onPress={option.onPress}
+                  active={option.active}
+                />
+              ))}
             </View>
           </View>
         </TouchableOpacity>
@@ -331,13 +317,24 @@ const NoteList = ({
             value={keyword}
             onChangeText={setKeyword}
           />
+          <BouncyCheckbox
+            style={[styles.status, { padding: 25 }]}
+            size={25}
+            isChecked={false}
+            onPress={() => {
+              filterStatus == undefined
+                ? setFilterStatus(true)
+                : setFilterStatus();
+            }}
+            fillColor="#E2E2E3"
+          />
           <TouchableOpacity
             style={styles.status}
             onPress={() => setModalVisible(true)}
           >
             <Icon5
               name="filter"
-              size={15}
+              size={18}
               style={[styles.textStyle, { width: 30 }]}
             />
           </TouchableOpacity>
@@ -389,12 +386,6 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 4,
     elevation: 5,
-  },
-  button: {
-    padding: 10,
-  },
-  buttonClose: {
-    backgroundColor: "#2F2F2F",
   },
   textStyle: {
     position: "relative",
@@ -536,7 +527,6 @@ const styles = StyleSheet.create({
 });
 const mapStateToProps = (state) => {
   return {
-    notes: state.notes,
     filteredItems: (options) => getFilteredItems(state, options),
   };
 };
