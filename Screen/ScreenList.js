@@ -48,17 +48,17 @@ const NoteList = ({
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedButton, setSelectedButton] = useState(null);
     // Constants
-  const { startOfDay, endOfDay, startOfWeek, endOfWeek, startOfMonth, endOfMonth } = useMemo(() => {
-    const now = Date.now();
-    return {
-      startOfDay: moment(now).startOf("day"),
-      endOfDay: moment(now).endOf("day"),
-      startOfWeek: moment(now).startOf("week"),
-      endOfWeek: moment(now).endOf("week"),
-      startOfMonth: moment().startOf("month"),
-      endOfMonth: moment().endOf("month"),
-    };
-  }, []);
+  // const { startOfDay, endOfDay, startOfWeek, endOfWeek, startOfMonth, endOfMonth } = useMemo(() => {
+  //   const now = Date.now();
+  //   return {
+  //     startOfDay: moment(now).startOf("day"),
+  //     endOfDay: moment(now).endOf("day"),
+  //     startOfWeek: moment(now).startOf("week"),
+  //     endOfWeek: moment(now).endOf("week"),
+  //     startOfMonth: moment().startOf("month"),
+  //     endOfMonth: moment().endOf("month"),
+  //   };
+  // }, []);
   // ----------------------
   const filterOptions = [
     {
@@ -71,22 +71,22 @@ const NoteList = ({
     },
     {
       text: "Today",
-      onPress: () => handleOptionPress([startOfDay, endOfDay], "T"),
+      onPress: () => handleOptionPress([moment().startOf("day"), moment().endOf("day")], "T"),
       active: selectedButton === "T",
     },
     {
       text: "This week",
-      onPress: () => handleOptionPress([startOfWeek, endOfWeek], "TW"),
+      onPress: () => handleOptionPress([moment().startOf("week"), moment().endOf("week")], "TW"),
       active: selectedButton === "TW",
     },
     {
       text: "Last week",
-      onPress: () => handleOptionPress([startOfWeek], "LW"),
+      onPress: () => handleOptionPress([moment().startOf("week")], "LW"),
       active: selectedButton === "LW",
     },
     {
       text: "This month",
-      onPress: () => handleOptionPress([startOfMonth, endOfMonth], "TM"),
+      onPress: () => handleOptionPress([moment().startOf("month"), moment().endOf("month")], "TM"),
       active: selectedButton === "TM",
     },
   ];
